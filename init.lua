@@ -14,6 +14,7 @@ vim.opt.number = true                              -- Line numbers
 vim.opt.relativenumber = true                      -- Relative line numbers
 vim.opt.cursorline = true                          -- Highlight current line
 vim.opt.wrap = false                               -- Don't wrap lines
+vim.opt.linebreak = true                           -- Wraps line by word rather then last character 
 vim.opt.scrolloff = 10                             -- Keep 10 lines above/below cursor 
 vim.opt.sidescrolloff = 8                          -- Keep 8 columns left/right of cursor
 
@@ -53,7 +54,7 @@ vim.opt.backup = false                             -- Don't create backup files
 vim.opt.writebackup = false                        -- Don't create backup before writing
 vim.opt.swapfile = false                           -- Don't create swap files
 vim.opt.undofile = true                            -- Persistent undo
-vim.opt.undodir = vim.fn.expand("~/.vim/undodir")  -- Undo directory
+vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"  -- Undo directory
 vim.opt.updatetime = 300                           -- Faster completion
 vim.opt.timeoutlen = 500                           -- Key timeout duration
 vim.opt.ttimeoutlen = 0                            -- Key code timeout
@@ -69,7 +70,13 @@ vim.opt.iskeyword:append("-")                      -- Treat dash as part of word
 vim.opt.path:append("**")                          -- include subdirectories in search
 vim.opt.selection = "exclusive"                    -- Selection behavior
 vim.opt.mouse = "a"                                -- Enable mouse support
-vim.opt.clipboard:append("unnamedplus")            -- Use system clipboard
+-- Sync clipboard between OS and Neovim. Schedule the setting after `UiEnter` because it can
+-- increase startup-time. Remove this option if you want your OS clipboard to remain independent.
+vim.api.nvim_create_autocmd('UIEnter', {
+  callback = function()
+    vim.o.clipboard = 'unnamedplus'
+  end,
+})
 vim.opt.modifiable = true                          -- Allow buffer modifications
 vim.opt.encoding = "UTF-8"                         -- Set encoding
 
@@ -145,6 +152,37 @@ vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position"
 -- Quick config editing
 vim.keymap.set("n", "<leader>rc", ":e $MYVIMRC<CR>", { desc = "Edit config" })
 vim.keymap.set("n", "<leader>rl", ":so $MYVIMRC<CR>", { desc = "Reload config" })
+
+-- Quick saving
+vim.keymap.set({ "n", "i"}, "<C-S>", ":w<CR>", { desc = "Save file" })
+
+-- Kickstart options
+vim.o.breakindent = true                           -- Enable break indent
+vim.o.inccommand = 'split'                         -- Preview substitutions live, as you type!
+vim.o.confirm = true                               -- Raise a dialog when closing unsaved buffer
+
+-- Czech keyboard layout remapping for NORMAL mode 
+vim.o.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
+
+-- Disable arrow keys in normal mode
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+
+-- Use <Esc> to exit terminal mode
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
+
+-- Wrap lines
+vim.keymap.set("n", "<leader>w", ":set wrap<CR>", { desc = "Wrap lines" })
+
+-- Quickfix window keybind
+vim.keymap.set('n', '<leader>qf', function()
+  vim.diagnostic.setqflist()
+  vim.cmd("copen")
+end, { desc = 'Open Quickfix window' })
+
+vim.cmd("command Q q")                             -- Q command to quit
 
 -- ============================================================================
 -- USEFUL FUNCTIONS
@@ -251,7 +289,7 @@ vim.opt.redrawtime = 10000
 vim.opt.maxmempattern = 20000
 
 -- Create undo directory if it doesn't exist
-local undodir = vim.fn.expand("~/.vim/undodir")
+local undodir = vim.fn.stdpath("data") .. "/undodir"
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
@@ -321,7 +359,7 @@ local function FloatingTerminal()
   end
 
   if not has_terminal then
-    vim.fn.termopen(os.getenv("SHELL"))
+    vim.fn.jobstart(vim.o.shell, {['term'] = true}) 
   end
 
   terminal_state.is_open = true
@@ -419,10 +457,10 @@ local function close_tabs_left()
 end
 
 -- Enhanced keybindings
-vim.keymap.set('n', '<leader>tO', open_file_in_tab, { desc = 'Open file in new tab' })
+vim.keymap.set('n', '<leader>to', open_file_in_tab, { desc = 'Open file in new tab' })
 vim.keymap.set('n', '<leader>td', duplicate_tab, { desc = 'Duplicate current tab' })
 vim.keymap.set('n', '<leader>tr', close_tabs_right, { desc = 'Close tabs to the right' })
-vim.keymap.set('n', '<leader>tL', close_tabs_left, { desc = 'Close tabs to the left' })
+vim.keymap.set('n', '<leader>tl', close_tabs_left, { desc = 'Close tabs to the left' })
 
 -- Function to close buffer but keep tab if it's the only buffer in tab
 local function smart_close_buffer()
@@ -442,11 +480,20 @@ vim.keymap.set('n', '<leader>bd', smart_close_buffer, { desc = 'Smart close buff
 
 -- Git branch function
 local function git_branch()
+-- Function is not working well on Windows, /dev/null doesn't exist and is causing performance drops
+  if vim.fn.has('win32') then
+    local branch = vim.fn.system("git branch --show-current 2>nul")
+    if branch ~= "" then
+      branch = string.gsub(branch, "%s+", "")
+      return " " .. branch .. " "
+    end
+    return ""
+  end
+
   local branch = vim.fn.system("git branch --show-current 2>/dev/null | tr -d '\n'")
   if branch ~= "" then
     return "  " .. branch .. " "
   end
-  return ""
 end
 
 -- File type with icon
@@ -465,7 +512,7 @@ local function file_type()
   }
 
   if ft == "" then
-    return "  "
+    return " [???] "
   end
 
   return (icons[ft] or ft)
@@ -534,10 +581,10 @@ local function setup_dynamic_statusline()
       "%{v:lua.mode_icon()}",
       "%#StatusLine#",
       " │ %f %h%m%r",
-      "%{v:lua.git_branch()}",
+--      "%{v:lua.git_branch()}",
       " │ ",
       "%{v:lua.file_type()}",
-      " | ",
+      " │ ",
       "%{v:lua.file_size()}",
       "%=",                     -- Right-align everything after this
       "%l:%c  %P ",             -- Line:Column and Percentage
@@ -554,3 +601,15 @@ local function setup_dynamic_statusline()
 end
 
 setup_dynamic_statusline()
+
+-- Change default diagnostic signs
+vim.diagnostic.config({
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '✘',
+      [vim.diagnostic.severity.WARN] = '▲',
+      [vim.diagnostic.severity.HINT] = '⚑',
+      [vim.diagnostic.severity.INFO] = '»',
+    },
+  },
+})
