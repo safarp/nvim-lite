@@ -154,7 +154,8 @@ vim.keymap.set("n", "<leader>rc", ":e $MYVIMRC<CR>", { desc = "Edit config" })
 vim.keymap.set("n", "<leader>rl", ":so $MYVIMRC<CR>", { desc = "Reload config" })
 
 -- Quick saving
-vim.keymap.set({ "n", "i"}, "<C-S>", ":w<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<C-S>", ":w<CR>", { desc = "Save file" })
+vim.keymap.set("i", "<C-S>", "<ESC>:w<CR>a", { desc = "Save file" })
 
 -- Kickstart options
 vim.o.breakindent = true                           -- Enable break indent
@@ -163,6 +164,10 @@ vim.o.confirm = true                               -- Raise a dialog when closin
 
 -- Czech keyboard layout remapping for NORMAL mode 
 vim.o.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
+
+-- Intending in Visual mode on Czech keyboard
+vim.keymap.set('v', '?', '<v')
+vim.keymap.set('v', ':', '>v')
 
 -- Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
