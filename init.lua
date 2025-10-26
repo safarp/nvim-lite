@@ -528,10 +528,19 @@ local function word_count()
   local ft = vim.bo.filetype
   if ft == "markdown" or ft == "text" or ft == "tex" then
     local words = vim.fn.wordcount().words
-    return "  " .. words .. " words "
+    return " " .. words .. " words "
   end
   return ""
 end
+
+vim.keymap.set('n', '<leader>wc', function()
+    local wc = word_count()
+    if wc == "" then
+      print("Word count supported only on text or markdown filetypes.") 
+    else
+      print("Word count is" .. wc)
+    end
+end, { desc = 'Print word count' })
 
 -- File size
 local function file_size()
