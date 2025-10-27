@@ -8,6 +8,7 @@ vim.cmd.colorscheme("unokai")
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
 vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+vim.api.nvim_set_hl(0, "WinSeparator", { link = "PmenuBorder" }) -- unokai scheme border color fix
 
 -- Basic settings
 vim.opt.number = true                              -- Line numbers
@@ -164,6 +165,8 @@ vim.o.confirm = true                               -- Raise a dialog when closin
 
 -- Czech keyboard layout remapping for NORMAL mode 
 vim.o.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
+
+vim.o.winborder = "single"                         -- Single line borders around windows
 
 -- Intending in Visual mode on Czech keyboard
 vim.keymap.set('v', '?', '<v')
