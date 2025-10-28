@@ -4,11 +4,10 @@
 -- ================================================================================================
 
 -- theme & transparency
-vim.cmd.colorscheme("unokai")
+vim.cmd.colorscheme("retrobox")
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
-vim.api.nvim_set_hl(0, "WinSeparator", { link = "PmenuBorder" }) -- unokai scheme border color fix
+vim.api.nvim_set_hl(0, "ColorColumn", { link = "CursorColumn" })
 
 -- Basic settings
 vim.opt.number = true                              -- Line numbers
@@ -412,11 +411,6 @@ end, { noremap = true, silent = true, desc = "Close floating terminal from termi
 vim.opt.showtabline = 1  -- Always show tabline (0=never, 1=when multiple tabs, 2=always)
 vim.opt.tabline = ''     -- Use default tabline (empty string uses built-in)
 
--- Transparent tabline appearance
-vim.cmd([[
-  hi TabLineFill guibg=NONE ctermfg=242 ctermbg=NONE
-]])
-
 -- Alternative navigation (more intuitive)
 vim.keymap.set('n', '<leader>tn', ':tabnew<CR>', { desc = 'New tab' })
 vim.keymap.set('n', '<leader>tx', ':tabclose<CR>', { desc = 'Close tab' })
@@ -584,17 +578,13 @@ _G.git_branch = git_branch
 _G.file_type = file_type
 _G.file_size = file_size
 
-vim.cmd([[
-  highlight StatusLineBold gui=bold cterm=bold
-]])
-
 -- Function to change statusline based on window focus
 local function setup_dynamic_statusline()
   vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
     callback = function()
     vim.opt_local.statusline = table.concat {
       "  ",
-      "%#StatusLineBold#",
+      "%#StatusLine#",
       "%{v:lua.mode_icon()}",
       "%#StatusLine#",
       " │ %f %h%m%r",
@@ -608,7 +598,6 @@ local function setup_dynamic_statusline()
     }
     end
   })
-  vim.api.nvim_set_hl(0, "StatusLineBold", { bold = true })
 
   vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
     callback = function()
