@@ -177,9 +177,6 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- Use <Esc> to exit terminal mode
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
-
 -- Wrap lines
 vim.keymap.set("n", "<leader>w", ":set wrap<CR>", { desc = "Wrap lines" })
 
@@ -286,7 +283,7 @@ vim.opt.redrawtime = 10000
 vim.opt.maxmempattern = 20000
 
 -- Create undo directory if it doesn't exist
-local undodir = vim.fn.stdpath("data") .. "/undodir"
+local undodir = vim.opt.undodir:get()[1]
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
