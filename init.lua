@@ -254,16 +254,6 @@ vim.api.nvim_create_autocmd("TermClose", {
   end,
 })
 
--- Disable line numbers in terminal
-vim.api.nvim_create_autocmd("TermOpen", {
-  group = augroup,
-  callback = function()
-    vim.opt_local.number = false
-    vim.opt_local.relativenumber = false
-    vim.opt_local.signcolumn = "no"
-  end,
-})
-
 -- Auto-resize splits when window is resized
 vim.api.nvim_create_autocmd("VimResized", {
   group = augroup,
@@ -328,8 +318,8 @@ local function FloatingTerminal()
   end
 
   -- Calculate window dimensions
-  local width = math.floor(vim.o.columns * 0.8)
-  local height = math.floor(vim.o.lines * 0.8)
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.9)
   local row = math.floor((vim.o.lines - height) / 2)
   local col = math.floor((vim.o.columns - width) / 2)
 
@@ -610,6 +600,7 @@ setup_dynamic_statusline()
 
 -- Change default diagnostic signs
 vim.diagnostic.config({
+  virtual_text = true,
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = '✘',
