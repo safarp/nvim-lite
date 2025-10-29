@@ -501,7 +501,7 @@ local function file_type()
   }
 
   if ft == "" then
-    return " [???] "
+    return "[???]"
   end
 
   return (icons[ft] or ft)
@@ -595,7 +595,7 @@ end
 
 setup_dynamic_statusline()
 
--- Change default diagnostic signs
+-- Change default diagnostic signs and add virtual text
 vim.diagnostic.config({
   virtual_text = true,
   signs = {
