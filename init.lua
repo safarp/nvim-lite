@@ -54,7 +54,8 @@ vim.opt.backup = false                             -- Don't create backup files
 vim.opt.writebackup = false                        -- Don't create backup before writing
 vim.opt.swapfile = false                           -- Don't create swap files
 vim.opt.undofile = true                            -- Persistent undo
-vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"  -- Undo directory
+local undodir = vim.fn.stdpath("data") .. "/undodir"
+vim.opt.undodir = undodir                          -- Undo directory
 vim.opt.updatetime = 300                           -- Faster completion
 vim.opt.timeoutlen = 500                           -- Key timeout duration
 vim.opt.ttimeoutlen = 0                            -- Key code timeout
@@ -283,7 +284,6 @@ vim.opt.redrawtime = 10000
 vim.opt.maxmempattern = 20000
 
 -- Create undo directory if it doesn't exist
-local undodir = vim.opt.undodir:get()[1]
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
@@ -353,7 +353,7 @@ local function FloatingTerminal()
   end
 
   if not has_terminal then
-    vim.fn.jobstart(vim.o.shell, {['term'] = true}) 
+    vim.fn.jobstart(vim.o.shell, {['term'] = true})
   end
 
   terminal_state.is_open = true
@@ -382,13 +382,7 @@ end
 
 -- Key mappings
 vim.keymap.set("n", "<leader>t", FloatingTerminal, { noremap = true, silent = true, desc = "Toggle floating terminal" })
-vim.keymap.set("t", "<Esc>", function()
-  if terminal_state.is_open then
-    vim.api.nvim_win_close(terminal_state.win, false)
-    terminal_state.is_open = false
-  end
-end, { noremap = true, silent = true, desc = "Close floating terminal from terminal mode" })
-
+vim.keymap.set("t", "<Esc>", CloseFloatingTerminal, { noremap = true, silent = true, desc = "Close floating terminal from terminal mode" })
 
 -- ============================================================================
 -- TABS
@@ -440,7 +434,7 @@ end
 local function close_tabs_left()
   local current_tab = vim.fn.tabpagenr()
 
-  for i = current_tab - 1, 1, -1 do
+  for _ = current_tab - 1, 1, -1 do
     vim.cmd('1tabclose')
   end
 end
@@ -520,7 +514,7 @@ end
 vim.keymap.set('n', '<leader>wc', function()
     local wc = word_count()
     if wc == "" then
-      print("Word count supported only on text or markdown filetypes.") 
+      print("Word count supported only on text or markdown filetypes.")
     else
       print("Word count is" .. wc)
     end
@@ -557,7 +551,7 @@ local function mode_icon()
     ["!"] = "SHELL",
     t = "TERMINAL"
   }
-  return modes[mode] or "  " .. mode:upper()
+  return modes[mode] or mode:upper()
 end
 
 _G.mode_icon = mode_icon
