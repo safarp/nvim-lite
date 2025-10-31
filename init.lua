@@ -50,11 +50,11 @@ vim.opt.lazyredraw = true                         -- Don't redraw during macros
 vim.opt.synmaxcol = 300                           -- Syntax highlighting limit
 
 -- File handling
+local undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.backup = false      -- Don't create backup files
 vim.opt.writebackup = false -- Don't create backup before writing
 vim.opt.swapfile = false    -- Don't create swap files
 vim.opt.undofile = true     -- Persistent undo
-local undodir = vim.fn.stdpath("data") .. "/undodir"
 vim.opt.undodir = undodir   -- Undo directory
 vim.opt.updatetime = 300    -- Faster completion
 vim.opt.timeoutlen = 500    -- Key timeout duration
@@ -71,6 +71,7 @@ vim.opt.iskeyword:append("-")          -- Treat dash as part of word
 vim.opt.path:append("**")              -- include subdirectories in search
 vim.opt.selection = "exclusive"        -- Selection behavior
 vim.opt.mouse = "a"                    -- Enable mouse support
+
 -- Sync clipboard between OS and Neovim. Schedule the setting after `UiEnter` because it can
 -- increase startup-time. Remove this option if you want your OS clipboard to remain independent.
 vim.api.nvim_create_autocmd('UIEnter', {
@@ -78,6 +79,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
         vim.o.clipboard = 'unnamedplus'
     end,
 })
+
 vim.opt.modifiable = true  -- Allow buffer modifications
 vim.opt.encoding = "UTF-8" -- Set encoding
 
@@ -183,10 +185,23 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 vim.keymap.set("n", "<leader>w", ":set wrap<CR>", { desc = "Wrap lines" })
 
 -- Quickfix window keybind
-vim.keymap.set('n', '<leader>qf', function()
+vim.keymap.set("n", "<leader>qf", function()
     vim.diagnostic.setqflist()
     vim.cmd("copen")
-end, { desc = 'Open Quickfix window' })
+end, { desc = "Open Quickfix window" })
+
+-- Format file. BufWritePre autocmd can be used to do it automatically on file save.
+vim.keymap.set("n", "<leader>F", function()
+    -- check if we have LSP supporting formatexpr
+    if vim.bo.formatexpr == nil or vim.bo.formatexpr == "" then
+        -- let's remember position so we can get back after the motion of formatting the whole file
+        local pos = vim.fn.getpos('.')
+        vim.cmd("normal! gggqG")
+        vim.fn.setpos('.', pos)
+    else
+        vim.lsp.buf.format()
+    end
+end, { desc = "Format file" })
 
 vim.cmd("command Q q") -- Q command to quit
 
