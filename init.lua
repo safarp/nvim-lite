@@ -171,18 +171,23 @@ vim.o.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
 
 vim.o.winborder = "single" -- Single line borders around windows
 
--- Intending in Visual mode on Czech keyboard
-vim.keymap.set('v', '?', '<v')
-vim.keymap.set('v', ':', '>v')
+-- Intending in Visual mode
+vim.keymap.set("v", "<tab>", ">v")
+vim.keymap.set("v", "<S-tab>", "<v")
 
 -- Disable arrow keys in normal mode
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set("n", "<left>", "<cmd>echo 'Use h to move!'<CR>")
+vim.keymap.set("n", "<right>", "<cmd>echo 'Use l to move!'<CR>")
+vim.keymap.set("n", "<up>", "<cmd>echo 'Use k to move!'<CR>")
+vim.keymap.set("n", "<down>", "<cmd>echo 'Use j to move!'<CR>")
 
 -- Wrap lines
 vim.keymap.set("n", "<leader>w", ":set wrap<CR>", { desc = "Wrap lines" })
+
+-- Execute Lua
+vim.keymap.set("n", "<leader><leader>x", ":luafile %<CR>", { desc = "Execute file" })
+vim.keymap.set("n", "<leader>x", ":.lua<CR>", { desc = "Execute current line" })
+vim.keymap.set("v", "<leader>x", ":lua<CR>", { desc = "Execute selection" })
 
 -- Quickfix window keybind
 vim.keymap.set("n", "<leader>qf", function()
@@ -410,13 +415,13 @@ vim.opt.showtabline = 1 -- Always show tabline (0=never, 1=when multiple tabs, 2
 vim.opt.tabline = ''    -- Use default tabline (empty string uses built-in)
 
 -- Alternative navigation (more intuitive)
-vim.keymap.set('n', '<leader>tn', ':tabnew<CR>', { desc = 'New tab' })
-vim.keymap.set('n', '<leader>tx', ':tabclose<CR>', { desc = 'Close tab' })
+vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "New tab" })
+vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close tab" })
 
 -- Tab moving
-vim.keymap.set('n', '<leader>tm', ':tabmove<CR>', { desc = 'Move tab' })
-vim.keymap.set('n', '<leader>t>', ':tabmove +1<CR>', { desc = 'Move tab right' })
-vim.keymap.set('n', '<leader>t<', ':tabmove -1<CR>', { desc = 'Move tab left' })
+vim.keymap.set("n", "<leader>tm", ":tabmove<CR>", { desc = "Move tab" })
+vim.keymap.set("n", "<leader>t>", ":tabmove +1<CR>", { desc = "Move tab right" })
+vim.keymap.set("n", "<leader>t<", ":tabmove -1<CR>", { desc = "Move tab left" })
 
 -- Function to open file in new tab
 local function open_file_in_tab()
@@ -457,10 +462,10 @@ local function close_tabs_left()
 end
 
 -- Enhanced keybindings
-vim.keymap.set('n', '<leader>to', open_file_in_tab, { desc = 'Open file in new tab' })
-vim.keymap.set('n', '<leader>td', duplicate_tab, { desc = 'Duplicate current tab' })
-vim.keymap.set('n', '<leader>tr', close_tabs_right, { desc = 'Close tabs to the right' })
-vim.keymap.set('n', '<leader>tl', close_tabs_left, { desc = 'Close tabs to the left' })
+vim.keymap.set("n", "<leader>to", open_file_in_tab, { desc = "Open file in new tab" })
+vim.keymap.set("n", "<leader>td", duplicate_tab, { desc = "Duplicate current tab" })
+vim.keymap.set("n", "<leader>tr", close_tabs_right, { desc = "Close tabs to the right" })
+vim.keymap.set("n", "<leader>tl", close_tabs_left, { desc = "Close tabs to the left" })
 
 -- Function to close buffer but keep tab if it's the only buffer in tab
 local function smart_close_buffer()
@@ -472,7 +477,7 @@ local function smart_close_buffer()
         vim.cmd('tabclose')
     end
 end
-vim.keymap.set('n', '<leader>bd', smart_close_buffer, { desc = 'Smart close buffer/tab' })
+vim.keymap.set("n", "<leader>bd", smart_close_buffer, { desc = "Smart close buffer/tab" })
 
 -- ============================================================================
 -- STATUSLINE
@@ -528,7 +533,7 @@ local function word_count()
     return ""
 end
 
-vim.keymap.set('n', '<leader>wc', function()
+vim.keymap.set("n", "<leader>wc", function()
     local wc = word_count()
     if wc == "" then
         print("Word count supported only on text or markdown filetypes.")
