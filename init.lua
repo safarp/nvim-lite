@@ -50,17 +50,16 @@ vim.opt.lazyredraw = true                         -- Don't redraw during macros
 vim.opt.synmaxcol = 300                           -- Syntax highlighting limit
 
 -- File handling
-local undodir = vim.fn.stdpath("data") .. "/undodir"
-vim.opt.backup = false      -- Don't create backup files
-vim.opt.writebackup = false -- Don't create backup before writing
-vim.opt.swapfile = false    -- Don't create swap files
-vim.opt.undofile = true     -- Persistent undo
-vim.opt.undodir = undodir   -- Undo directory
-vim.opt.updatetime = 300    -- Faster completion
-vim.opt.timeoutlen = 500    -- Key timeout duration
-vim.opt.ttimeoutlen = 0     -- Key code timeout
-vim.opt.autoread = true     -- Auto reload files changed outside vim
-vim.opt.autowrite = false   -- Don't auto save
+vim.opt.backup = false                                 -- Don't create backup files
+vim.opt.writebackup = false                            -- Don't create backup before writing
+vim.opt.swapfile = false                               -- Don't create swap files
+vim.opt.undofile = true                                -- Persistent undo
+vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir" -- Undo directory
+vim.opt.updatetime = 300                               -- Faster completion
+vim.opt.timeoutlen = 500                               -- Key timeout duration
+vim.opt.ttimeoutlen = 0                                -- Key code timeout
+vim.opt.autoread = true                                -- Auto reload files changed outside vim
+vim.opt.autowrite = false                              -- Don't auto save
 
 -- Behavior settings
 vim.opt.hidden = true                  -- Allow hidden buffers
@@ -76,7 +75,7 @@ vim.opt.mouse = "a"                    -- Enable mouse support
 -- increase startup-time. Remove this option if you want your OS clipboard to remain independent.
 vim.api.nvim_create_autocmd('UIEnter', {
     callback = function()
-        vim.o.clipboard = 'unnamedplus'
+        vim.opt.clipboard = 'unnamedplus'
     end,
 })
 
@@ -95,6 +94,21 @@ vim.opt.foldlevel = 99                          -- Start with all folds open
 -- Split behavior
 vim.opt.splitbelow = true -- Horizontal splits go below
 vim.opt.splitright = true -- Vertical splits go right
+
+-- Kickstart options
+vim.opt.breakindent = true   -- Enable break indent
+vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
+vim.opt.confirm = true       -- Raise a dialog when closing unsaved buffer
+
+-- Czech keyboard layout remapping for NORMAL mode
+vim.opt.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
+
+vim.opt.winborder = "single" -- Single line borders around windows
+
+-- Netrw settings
+vim.g.netrw_banner = 0       -- Disable the banner
+vim.g.netrw_liststyle = 3    -- File tree list style
+vim.g.netrw_winsize = 30     -- Occupy 30% of screen
 
 -- Key mappings
 vim.g.mapleader = " "      -- Set leader key to space
@@ -147,7 +161,7 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 -- Quick file navigation
-vim.keymap.set("n", "<leader>e", ":Explore<CR>", { desc = "Open file explorer" })
+vim.keymap.set("n", "<leader>e", ":Lexplore<CR>", { desc = "Open file explorer" })
 vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file" })
 
 -- Better J behavior
@@ -160,16 +174,6 @@ vim.keymap.set("n", "<leader>rl", ":so $MYVIMRC<CR>", { desc = "Reload config" }
 -- Quick saving
 vim.keymap.set("n", "<C-S>", ":w<CR>", { desc = "Save file" })
 vim.keymap.set("i", "<C-S>", "<ESC>:w<CR>a", { desc = "Save file" })
-
--- Kickstart options
-vim.o.breakindent = true   -- Enable break indent
-vim.o.inccommand = 'split' -- Preview substitutions live, as you type!
-vim.o.confirm = true       -- Raise a dialog when closing unsaved buffer
-
--- Czech keyboard layout remapping for NORMAL mode
-vim.o.langmap = "\":,-/,+1,ě2,š3,č4,ř5,ž6,ý7,á8,í9,é0"
-
-vim.o.winborder = "single" -- Single line borders around windows
 
 -- Intending in Visual mode
 vim.keymap.set("v", "<tab>", ">v")
@@ -305,8 +309,8 @@ vim.opt.redrawtime = 10000
 vim.opt.maxmempattern = 20000
 
 -- Create undo directory if it doesn't exist
-if vim.fn.isdirectory(undodir) == 0 then
-    vim.fn.mkdir(undodir, "p")
+if vim.fn.isdirectory(vim.o.undodir) == 0 then
+    vim.fn.mkdir(vim.o.undodir, "p")
 end
 
 -- ============================================================================
