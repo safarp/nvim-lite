@@ -1,9 +1,9 @@
 -- ================================================================================================
--- title : Suckless NeoVim Config
--- author: Radley E. Sidwell-lewis
+-- Single file Neovim configuration
+-- Based on Suckless Neovim Config from Radley E. Sidwell-lewis
 -- ================================================================================================
 
--- theme & transparency
+-- Theme & transparency
 vim.cmd.colorscheme("retrobox")
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
@@ -65,7 +65,7 @@ vim.opt.autowrite = false                              -- Don't auto save
 vim.opt.hidden = true                  -- Allow hidden buffers
 vim.opt.errorbells = false             -- No error bells
 vim.opt.backspace = "indent,eol,start" -- Better backspace behavior
-vim.opt.autochdir = false              -- Don't auto change directory
+vim.opt.autochdir = true               -- Do auto change directory
 vim.opt.iskeyword:append("-")          -- Treat dash as part of word
 vim.opt.path:append("**")              -- include subdirectories in search
 vim.opt.selection = "exclusive"        -- Selection behavior
