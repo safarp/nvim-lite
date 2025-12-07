@@ -176,8 +176,8 @@ vim.keymap.set("n", "<C-S>", ":w<CR>", { desc = "Save file" })
 vim.keymap.set("i", "<C-S>", "<ESC>:w<CR>a", { desc = "Save file" })
 
 -- Intending in Visual mode
-vim.keymap.set("v", "<tab>", ">v")
-vim.keymap.set("v", "<S-tab>", "<v")
+vim.keymap.set("v", "<tab>", ">v", { desc = "Intend left" })
+vim.keymap.set("v", "<S-tab>", "<v", { desc = "Intend right" })
 
 -- Disable arrow keys in normal mode
 vim.keymap.set("n", "<left>", "<cmd>echo 'Use h to move!'<CR>")
@@ -223,7 +223,7 @@ vim.keymap.set("n", "<leader>pa", function()
     local path = vim.fn.expand("%:p")
     vim.fn.setreg("+", path)
     print("file:", path)
-end)
+end, { desc = "Copy file path to a clipboard" })
 
 -- Basic autocommands
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
